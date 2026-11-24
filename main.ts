@@ -202,18 +202,19 @@ function entryOk(state: BotState, mint: string, flow: CoinFlow): boolean {
   if (flow.buyers.size < MIN_DISTINCT_BUYERS) return false;
   if (flow.othersBuySol < MIN_OTHERS_BUY_LAMPORTS) return false;
   if (flow.othersSellSol * 10_000n > flow.othersBuySol * MAX_OTHERS_SELL_BPS) return false;
-  // Run-up from the creation price, in exact integer math:
-  //   price / creation price = (vq / vt) / (createVq / createVt)
-  //   >= +1%  <=>  vq * createVt * 100 >= vt * createVq * 101
-  //   <= +40% <=>  vq * createVt * 100 <= vt * createVq * 140
+  // Run-up from the creation price, in exact integer math. With
+  //   lhs = vq * createVt and rhs = vt * createVq, the price ratio is
+  //   price / creation price = lhs / rhs, so
+  //   >= +1%  <=>  lhs * 10000 >= rhs * (10000 + 100)
+  //   <= +40% <=>  lhs * 10000 <= rhs * (10000 + 4000)
   if (flow.createVq <= 0n || flow.createVt <= 0n) return false;
   const vq = curve.virtual_quote_reserves;
   const vt = curve.virtual_token_reserves;
   if (vq <= 0n || vt <= 0n) return false;
-  const lhs = vq * flow.createVt * 100n;
+  const lhs = vq * flow.createVt;
   const rhs = vt * flow.createVq;
-  if (lhs < rhs * (100n + RUN_UP_MIN_BPS)) return false;
-  if (lhs > rhs * (100n + RUN_UP_MAX_BPS)) return false;
+  if (lhs * 10_000n < rhs * (10_000n + RUN_UP_MIN_BPS)) return false;
+  if (lhs * 10_000n > rhs * (10_000n + RUN_UP_MAX_BPS)) return false;
   return true;
 }
 
