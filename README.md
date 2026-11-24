@@ -35,12 +35,14 @@ The bot is a pure function of the hello message and the batch stream: no clock, 
 
 ## Dev-window validation
 
-Graded locally with the kit on the published frozen 24-hour dev window (dataset sha256 `b661ceee26070f1f07eced009b43dda699e1e96d40a6724c7e72273b1e3715a9`):
+Graded locally with the kit on the published frozen 24-hour dev window (dataset sha256 `b661ceee26070f1f07eced009b43dda699e1e96d40a6724c7e72273b1e3715a9`), `--driver process`:
 
-- Dev net PnL: **+0.0187 SOL**
-- Fills: **80** across **32 coins**
-- Max drawdown: **0.4%**
-- Sharpe: **+0.092**
+- Dev net PnL: **+0.0178 SOL** (17,802,121 lamports)
+- Fills: **80** across **32 coins** (32 round trips ≥ 0.01 SOL)
+- Max drawdown: **0.4%** (0.415%)
+- Sharpe: **+0.089** (sortino +0.160, win rate 43.8%)
+- Status: **finished**, two executions reproduced (`l1.reproduced: true`)
+- Result sha256: `c376bf27344b13ede8d4a6c59dc186d6ac5a16cc44a1b2731be8e5bef7a833e1`
 
 The positive region is a broad plateau: trail 3000–5000 bps combined with stop 2000–3000 bps all score positive on the dev window, so the result does not hinge on a single tuned parameter.
 
